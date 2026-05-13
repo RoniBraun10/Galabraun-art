@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GALA BRAUN — Art Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Neue+Haas+Grotesk+Display+Pro:wght@400;500&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f2ee;
+    --cream: #ede9e2;
+    --warm-gray: #b8b0a4;
+    --accent: #c8493a;
+    --gold: #c4a35a;
+    --font-display: 'Cormorant Garamond', serif;
+    --font-ui: 'Space Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-ui);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--white);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, background 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(245,242,238,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.35s ease, width 0.3s, height 0.3s, border-color 0.3s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor.hover { transform: translate(-50%, -50%) scale(2); background: var(--accent); }
+  .cursor-ring.hover { width: 60px; height: 60px; border-color: var(--accent); }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 48px;
+    mix-blend-mode: difference;
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    color: var(--white); text-decoration: none;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    opacity: 0.7; transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+  .cart-btn {
+    background: none; border: 1px solid rgba(245,242,238,0.4);
+    color: var(--white); font-family: var(--font-ui);
+    font-size: 10px; letter-spacing: 0.1em;
+    padding: 8px 18px; cursor: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .cart-btn:hover { background: var(--white); color: var(--black); }
+
+  /* HERO */
+  .hero {
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-image-side {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-image-side img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: saturate(1.15) contrast(1.05);
+    transition: transform 8s ease;
+  }
+  .hero:hover .hero-image-side img { transform: scale(1.03); }
+
+  .hero-text-side {
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 48px 64px 80px;
+    background: var(--black);
+    position: relative;
+  }
+  .hero-kicker {
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--warm-gray); margin-bottom: 24px;
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(60px, 7vw, 100px);
+    font-weight: 300;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin-bottom: 40px;
+  }
+  .hero-title em { font-style: italic; color: var(--gold); }
+  .hero-desc {
+    font-size: 11px; color: var(--warm-gray); line-height: 1.9;
+    max-width: 320px; margin-bottom: 48px;
+    direction: rtl;
+  }
+  .hero-cta {
+    display: inline-block;
+    background: var(--white); color: var(--black);
+    padding: 16px 36px;
+    font-family: var(--font-ui); font-size: 10px; letter-spacing: 0.15em;
+    text-transform: uppercase; text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    cursor: none;
+  }
+  .hero-cta:hover { background: var(--accent); color: var(--white); }
+
+  .hero-counter {
+    position: absolute; bottom: 80px; left: 64px;
+    font-family: var(--font-display); font-size: 120px; font-weight: 300;
+    color: rgba(245,242,238,0.04); line-height: 1;
+    pointer-events: none; user-select: none;
+  }
+
+  .scroll-indicator {
+    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .scroll-line {
+    width: 1px; height: 48px;
+    background: linear-gradient(to bottom, var(--warm-gray), transparent);
+    animation: scrollDown 2s infinite;
+  }
+  @keyframes scrollDown {
+    0% { opacity: 0; transform: scaleY(0); transform-origin: top; }
+    50% { opacity: 1; transform: scaleY(1); transform-origin: top; }
+    100% { opacity: 0; transform: scaleY(1); transform-origin: bottom; }
+  }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    border-top: 1px solid rgba(245,242,238,0.1);
+    border-bottom: 1px solid rgba(245,242,238,0.1);
+    padding: 16px 0;
+    overflow: hidden;
+    background: var(--black);
+  }
+  .marquee-track {
+    display: flex; gap: 0;
+    animation: marquee 18s linear infinite;
+    width: max-content;
+  }
+  .marquee-item {
+    display: flex; align-items: center; gap: 32px;
+    padding: 0 32px;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--warm-gray); white-space: nowrap;
+  }
+  .marquee-dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0;
+  }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* COLLECTION GRID */
+  .section { padding: 100px 48px; }
+  .section-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 64px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 5vw, 72px);
+    font-weight: 300; letter-spacing: -0.01em;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .section-meta { color: var(--warm-gray); font-size: 10px; text-align: left; }
+  .section-meta span { display: block; color: var(--white); font-size: 24px; font-family: var(--font-display); font-weight: 300; }
+
+  .filter-bar {
+    display: flex; gap: 2px; margin-bottom: 48px;
+  }
+  .filter-btn {
+    background: none; border: 1px solid rgba(245,242,238,0.15);
+    color: var(--warm-gray); font-family: var(--font-ui);
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 10px 20px; cursor: none; transition: all 0.2s;
+  }
+  .filter-btn.active { background: var(--white); color: var(--black); border-color: var(--white); }
+  .filter-btn:hover:not(.active) { border-color: var(--white); color: var(--white); }
+
+  /* MASONRY GRID */
+  .art-grid {
+    columns: 3;
+    column-gap: 16px;
+  }
+  .art-card {
+    break-inside: avoid;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+  }
+  .art-card:nth-child(3n+1) { margin-top: 0; }
+  .art-card:nth-child(3n+2) { margin-top: 48px; }
+  .art-card:nth-child(3n+3) { margin-top: -32px; }
+
+  .art-img-wrap {
+    position: relative; overflow: hidden;
+    background: #1a1a1a;
+  }
+  .art-img-wrap img {
+    width: 100%; display: block;
+    transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    filter: saturate(1.1);
+  }
+  .art-card:hover .art-img-wrap img { transform: scale(1.06); }
+
+  .art-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 50%);
+    opacity: 0; transition: opacity 0.4s;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 24px;
+  }
+  .art-card:hover .art-overlay { opacity: 1; }
+
+  .art-quick-add {
+    background: var(--white); color: var(--black);
+    border: none; font-family: var(--font-ui);
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 12px 20px; cursor: none; width: 100%;
+    transition: background 0.2s;
+    margin-bottom: 12px;
+  }
+  .art-quick-add:hover { background: var(--accent); color: var(--white); }
+
+  .art-info { padding: 16px 0 8px; }
+  .art-name {
+    font-family: var(--font-display);
+    font-size: 18px; font-weight: 300;
+    margin-bottom: 6px;
+  }
+  .art-details {
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--warm-gray); font-size: 10px;
+  }
+  .art-price {
+    font-family: var(--font-display);
+    font-size: 20px; color: var(--white); font-weight: 300;
+  }
+  .art-type { text-transform: uppercase; letter-spacing: 0.1em; }
+  .art-badge {
+    position: absolute; top: 16px; right: 16px;
+    background: var(--accent); color: var(--white);
+    font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 5px 10px;
+  }
+
+  /* FEATURED FULLWIDTH */
+  .featured-section {
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 80vh;
+  }
+  .featured-img {
+    overflow: hidden; position: relative;
+  }
+  .featured-img img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    filter: saturate(1.2) contrast(1.05);
+    transition: transform 6s ease;
+  }
+  .featured-img:hover img { transform: scale(1.04); }
+
+  .featured-content {
+    background: #111;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px;
+  }
+  .featured-label {
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 24px;
+  }
+  .featured-title {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 4vw, 64px);
+    font-weight: 300; line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  .featured-dims {
+    font-size: 10px; color: var(--warm-gray);
+    margin-bottom: 32px; letter-spacing: 0.1em;
+  }
+  .featured-desc {
+    color: var(--warm-gray); line-height: 1.9; font-size: 11px;
+    margin-bottom: 48px; max-width: 360px;
+    direction: rtl;
+  }
+  .featured-price-row {
+    display: flex; align-items: baseline; gap: 16px; margin-bottom: 40px;
+  }
+  .featured-price {
+    font-family: var(--font-display);
+    font-size: 48px; font-weight: 300;
+  }
+  .featured-currency { color: var(--warm-gray); font-size: 11px; }
+
+  .btn-primary {
+    display: inline-block; background: var(--white); color: var(--black);
+    border: none; font-family: var(--font-ui); font-size: 10px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 16px 40px; cursor: none; text-decoration: none;
+    transition: background 0.2s, color 0.2s; margin-left: 16px;
+  }
+  .btn-primary:hover { background: var(--accent); color: var(--white); }
+  .btn-secondary {
+    display: inline-block; background: transparent; color: var(--warm-gray);
+    border: 1px solid rgba(245,242,238,0.2);
+    font-family: var(--font-ui); font-size: 10px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 16px 40px; cursor: none; text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--white); color: var(--white); }
+
+  /* PRINTS SECTION */
+  .prints-section { padding: 100px 48px; background: var(--cream); color: var(--black); }
+  .prints-section .section-title { color: var(--black); }
+  .prints-section .section-title em { color: var(--accent); }
+  .prints-section .section-meta { color: #888; }
+  .prints-section .section-meta span { color: var(--black); }
+  .prints-section .filter-btn { border-color: rgba(10,10,10,0.2); color: #666; }
+  .prints-section .filter-btn.active { background: var(--black); color: var(--white); border-color: var(--black); }
+  .prints-section .filter-btn:hover:not(.active) { border-color: var(--black); color: var(--black); }
+  .prints-section .art-name { color: var(--black); }
+  .prints-section .art-price { color: var(--black); }
+  .prints-section .art-details { color: #888; }
+  .prints-section .art-card { background: transparent; }
+
+  /* PROCESS / ABOUT STRIP */
+  .about-strip {
+    padding: 120px 48px;
+    display: grid;
+    grid-template-columns: 1fr 2px 1fr;
+    gap: 0;
+    align-items: start;
+  }
+  .strip-divider {
+    background: rgba(245,242,238,0.1);
+    height: 100%;
+  }
+  .about-left { padding-left: 0; padding-right: 80px; }
+  .about-right { padding-left: 80px; }
+  .about-kicker { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+  .about-title { font-family: var(--font-display); font-size: 48px; font-weight: 300; line-height: 1.1; margin-bottom: 32px; }
+  .about-body { color: var(--warm-gray); line-height: 1.9; font-size: 11px; margin-bottom: 32px; direction: rtl; }
+  .about-stat { font-family: var(--font-display); font-size: 72px; font-weight: 300; color: var(--white); line-height: 1; }
+  .about-stat-label { font-size: 10px; color: var(--warm-gray); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 8px; }
+  .stats-row { display: flex; gap: 64px; margin-top: 48px; }
+
+  /* TESTIMONIAL */
+  .testimonial-section {
+    padding: 100px 48px;
+    text-align: center;
+    border-top: 1px solid rgba(245,242,238,0.1);
+  }
+  .testimonial-quote {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.5vw, 52px);
+    font-weight: 300; font-style: italic;
+    line-height: 1.3; max-width: 900px; margin: 0 auto 40px;
+    color: var(--white);
+    direction: rtl;
+  }
+  .testimonial-author { color: var(--warm-gray); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+
+  /* INSTAGRAM STRIP */
+  .instagram-strip { padding: 0 48px 100px; }
+  .instagram-title {
+    font-family: var(--font-display); font-size: 32px; font-weight: 300;
+    text-align: center; margin-bottom: 40px; color: var(--warm-gray);
+  }
+  .instagram-title a { color: var(--white); text-decoration: none; }
+  .instagram-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+  }
+  .instagram-item {
+    aspect-ratio: 1; overflow: hidden;
+    position: relative; cursor: none;
+  }
+  .instagram-item img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.5s ease, filter 0.3s;
+    filter: saturate(1.1);
+  }
+  .instagram-item:hover img { transform: scale(1.1); filter: saturate(1.4); }
+  .instagram-item-overlay {
+    position: absolute; inset: 0;
+    background: rgba(10,10,10,0.5);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .instagram-item:hover .instagram-item-overlay { opacity: 1; }
+  .insta-icon { font-size: 24px; color: white; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid rgba(245,242,238,0.1);
+    padding: 64px 48px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .footer-brand { font-family: var(--font-display); font-size: 32px; font-weight: 300; letter-spacing: 0.05em; margin-bottom: 16px; }
+  .footer-tagline { color: var(--warm-gray); font-size: 11px; line-height: 1.8; direction: rtl; }
+  .footer-col-title { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 20px; }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 12px; }
+  .footer-links a { color: var(--white); text-decoration: none; font-size: 11px; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-bottom {
+    border-top: 1px solid rgba(245,242,238,0.08);
+    padding: 24px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-copy { font-size: 10px; color: var(--warm-gray); }
+
+  /* CART SIDEBAR */
+  .cart-sidebar {
+    position: fixed; top: 0; right: -480px; width: 420px; height: 100vh;
+    background: #111; z-index: 200;
+    transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    padding: 48px;
+    display: flex; flex-direction: column;
+    border-left: 1px solid rgba(245,242,238,0.1);
+  }
+  .cart-sidebar.open { right: 0; }
+  .cart-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 199; opacity: 0; pointer-events: none;
+    transition: opacity 0.4s;
+    backdrop-filter: blur(4px);
+  }
+  .cart-overlay.open { opacity: 1; pointer-events: all; }
+  .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; }
+  .cart-title { font-family: var(--font-display); font-size: 28px; font-weight: 300; }
+  .cart-close { background: none; border: none; color: var(--white); cursor: none; font-size: 20px; }
+  .cart-items { flex: 1; overflow-y: auto; }
+  .cart-item {
+    display: grid; grid-template-columns: 80px 1fr auto;
+    gap: 16px; padding: 20px 0;
+    border-bottom: 1px solid rgba(245,242,238,0.08);
+    align-items: center;
+  }
+  .cart-item-img { width: 80px; height: 80px; object-fit: cover; }
+  .cart-item-name { font-family: var(--font-display); font-size: 18px; font-weight: 300; margin-bottom: 4px; }
+  .cart-item-sub { font-size: 10px; color: var(--warm-gray); }
+  .cart-item-price { font-family: var(--font-display); font-size: 20px; font-weight: 300; }
+  .cart-footer { padding-top: 32px; border-top: 1px solid rgba(245,242,238,0.1); }
+  .cart-total-row { display: flex; justify-content: space-between; margin-bottom: 24px; }
+  .cart-total-label { color: var(--warm-gray); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .cart-total-price { font-family: var(--font-display); font-size: 32px; font-weight: 300; }
+  .checkout-btn {
+    width: 100%; background: var(--white); color: var(--black);
+    border: none; font-family: var(--font-ui); font-size: 11px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 18px; cursor: none; transition: background 0.2s;
+  }
+  .checkout-btn:hover { background: var(--accent); color: var(--white); }
+  .cart-empty { text-align: center; padding: 80px 0; color: var(--warm-gray); }
+  .cart-empty-title { font-family: var(--font-display); font-size: 32px; font-weight: 300; margin-bottom: 12px; color: var(--white); }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--white); color: var(--black);
+    padding: 14px 28px; font-size: 11px; letter-spacing: 0.08em;
+    opacity: 0; transition: all 0.3s; z-index: 300; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* LOADING SCREEN */
+  .loader {
+    position: fixed; inset: 0; background: var(--black);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; z-index: 1000;
+    transition: opacity 0.8s, visibility 0.8s;
+  }
+  .loader.done { opacity: 0; visibility: hidden; }
+  .loader-text {
+    font-family: var(--font-display); font-size: 80px; font-weight: 300;
+    letter-spacing: 0.1em; overflow: hidden; height: 90px;
+    display: flex; align-items: center;
+  }
+  .loader-text span { animation: loaderReveal 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; opacity: 0; transform: translateY(100%); }
+  @keyframes loaderReveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .loader-line {
+    width: 0; height: 1px; background: var(--warm-gray);
+    margin-top: 24px;
+    animation: loaderLine 1.5s ease forwards 0.5s;
+  }
+  @keyframes loaderLine { to { width: 240px; } }
+  .loader-sub {
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--warm-gray); margin-top: 16px;
+    opacity: 0; animation: fadeIn 0.6s ease forwards 1.2s;
+  }
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  /* REVEAL ANIMATIONS */
+  .reveal {
+    opacity: 0; transform: translateY(32px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 1024px) {
+    .art-grid { columns: 2; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-image-side { height: 60vh; }
+    .featured-section { grid-template-columns: 1fr; }
+    .featured-img { height: 60vh; }
+    footer { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+  <div class="loader-text"><span style="animation-delay:0.2s">GALA</span>&nbsp;<span style="animation-delay:0.4s;font-style:italic;color:#c4a35a">BRAUN</span></div>
+  <div class="loader-line"></div>
+  <div class="loader-sub">Art Studio — Tel Aviv</div>
+</div>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+<!-- CART SIDEBAR -->
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <div class="cart-title">הסל שלך</div>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <div class="cart-empty-title">הסל ריק</div>
+      <div style="font-size:11px;color:var(--warm-gray);margin-top:8px">הוסף ציור שייקח את הנשימה</div>
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total-row">
+      <span class="cart-total-label">סה"כ</span>
+      <span class="cart-total-price" id="cartTotal">₪0</span>
+    </div>
+    <button class="checkout-btn">מעבר לתשלום →</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">GALA BRAUN</a>
+  <ul class="nav-links">
+    <li><a href="#originals">ציורים</a></li>
+    <li><a href="#prints">הדפסים</a></li>
+    <li><a href="#about">סטודיו</a></li>
+    <li><a href="#contact">צור קשר</a></li>
+  </ul>
+  <button class="cart-btn" onclick="openCart()">סל <span id="cartCount">(0)</span></button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-image-side">
+    <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=900&q=85" alt="Abstract colorful painting">
+    <div class="hero-counter">01</div>
+  </div>
+  <div class="hero-text-side">
+    <div class="hero-kicker">Collection 2025 — Original Works</div>
+    <h1 class="hero-title">
+      צבע.<br>
+      <em>נשמה.</em><br>
+      קנבס.
+    </h1>
+    <p class="hero-desc">ציורים אבסטרקטיים עשויים ביד, מלאי אנרגיה וצבע. כל עבודה היא עולם שלם שמחכה לקיר שלך.</p>
+    <a href="#originals" class="hero-cta">גלה את האוסף</a>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item"><div class="marquee-dot"></div>ציורי מקור<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>הדפסים איכותיים<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>עבודות בהזמנה<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>משלוח לכל הארץ<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Original Paintings<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Fine Art Prints<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Commission Works<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Worldwide Shipping<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>ציורי מקור<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>הדפסים איכותיים<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>עבודות בהזמנה<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>משלוח לכל הארץ<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Original Paintings<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquete-dot"></div>Fine Art Prints<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Commission Works<div class="marquee-dot"></div></div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Worldwide Shipping<div class="marquee-dot"></div></div>
+  </div>
+</div>
+
+<!-- ORIGINALS SECTION -->
+<section class="section" id="originals">
+  <div class="section-header reveal">
+    <div>
+      <h2 class="section-title">ציורי <em>מקור</em></h2>
+    </div>
+    <div class="section-meta">
+      <span id="origCount">6</span>
+      עבודות זמינות
+    </div>
+  </div>
+
+  <div class="filter-bar reveal">
+    <button class="filter-btn active" onclick="filterArt('all', this)">הכל</button>
+    <button class="filter-btn" onclick="filterArt('abstract', this)">אבסטרקט</button>
+    <button class="filter-btn" onclick="filterArt('figure', this)">פיגורטיבי</button>
+    <button class="filter-btn" onclick="filterArt('texture', this)">טקסטורה</button>
+  </div>
+
+  <div class="art-grid" id="originalsGrid">
+
+    <div class="art-card reveal" data-cat="abstract">
+      <div class="art-img-wrap" style="aspect-ratio: 3/4;">
+        <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&q=80" alt="Fire & Rain">
+        <div class="art-badge">חדש</div>
+        <div class="art-overlay">
+          <button class="art-quick-add" onclick="addToCart('Fire & Rain', 3800, 'ציור מקור')">הוסף לסל — ₪3,800</button>
+        </div>
+      </div>
+      <div class="art-info">
+        <div class="art-name">Fire & Rain</div>
+        <div class="art-details">
+          <span class="art-type">אקריליק · 80×100</span>
+          <span class="art-price">₪3,800</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card reveal" data-cat="abstract">
+      <div class="art-img-wrap" style="aspect-ratio: 1/1;">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Ocean Chaos">
+        <div class="art-overlay">
+          <button class="art-quick-add" onclick="addToCart('Ocean Chaos', 5200, 'ציור מקור')">הוסף לסל — ₪5,200</button>
+        </div>
+      </div>
+      <div class="art-info">
+        <div class="art-name">Ocean Chaos</div>
+        <div class="art-details">
+          <span class="art-type">שמן · 120×120</span>
+          <span class="art-price">₪5,200</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card reveal" data-cat="figure">
+      <div class="art-img-wrap" style="aspect-ratio: 2/3;">
+        <img src="https://images.unsplash.com/photo-1547826039-bdbebb989f68?w=600&q=80" alt="She Blooms">
+        <div class="art-badge">נמכר</div>
+        <div class="art-overlay" style="background:linear-gradient(to top,rgba(200,73,58,0.6) 0%,transparent 60%);">
+          <button class="art-quick-add" style="background:var(--warm-gray);cursor:none;" disabled>נמכר</button>
+        </div>
+      </div>
+      <div class="art-info">
+        <div class="art-name">She Blooms</div>
+        <div class="art-details">
+          <span class="art-type">מיקס מדיה · 60×90</span>
+          <span class="art-price" style="color:var(--warm-gray)">נמכר</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card reveal" data-cat="texture">
+      <div class="art-img-wrap" style="aspect-ratio: 4/5;">
+        <img src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?w=600&q=80" alt="Concrete Dream">
+        <div class="art-overlay">
+          <button class="art-quick-add" onclick="addToCart('Concrete Dream', 4400, 'ציור מקור')">הוסף לסל — ₪4,400</button>
+        </div>
+      </div>
+      <div class="art-info">
+        <div class="art-name">Concrete Dream</div>
+        <div class="art-details">
+          <span class="art-type">מיקס מדיה · 100×120</span>
+          <span class="art-price">₪4,400</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card reveal" data-cat="abstract">
+      <div class="art-img-wrap" style="aspect-ratio: 1/1.2;">
+        <img src="https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=600&q=80" alt="Neon Garden">
+        <div class="art-overlay">
+          <button class="art-quick-add" onclick="addToCart('Neon Garden', 6800, 'ציור מקור')">הוסף לסל — ₪6,800</button>
+        </div>
+      </div>
+      <div class="art-info">
+        <div class="art-name">Neon Garden</div>
+        <div class="art-details">
+          <span class="art-type">אקריליק · 140×140</span>
+          <span class="art-price">₪6,800</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card reveal" data-cat="figure">
+      <div class="art-img-wrap" style="aspect-ratio: 3/4;">
+        <img src="https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=600&q=80" alt="Wild Woman">
+        <div class="art-badge">חדש</div>
+        <div class="art-overlay">
+          <button class="art-quick-add" onclick="addToCart('Wild Woman', 5800, 'ציור מקור')">הוסף לסל — ₪5,800</button>
+        </div>
+      </div>
+      <div class="art-info">
+        <div class="art-name">Wild Woman</div>
+        <div class="art-details">
+          <span class="art-type">שמן · 90×120</span>
+          <span class="art-price">₪5,800</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FEATURED WORK -->
+<section class="featured-section">
+  <div class="featured-img">
+    <img src="https://images.unsplash.com/photo-1549490349-8643362247b5?w=900&q=85" alt="Featured artwork">
+  </div>
+  <div class="featured-content">
+    <div class="featured-label">⟡ Work of the Month</div>
+    <h3 class="featured-title">Explosion<br>of Light</h3>
+    <div class="featured-dims">אקריליק על קנבס · 160 × 200 ס"מ</div>
+    <p class="featured-desc">עבודה מונומנטלית שנוצרה לאורך שלושה שבועות. שכבה על שכבה של צבע, כל אחת חושפת משהו חדש. זו לא ציור – זו חוויה.</p>
+    <div class="featured-price-row">
+      <span class="featured-price">₪12,500</span>
+      <span class="featured-currency">כולל מסגרת ומשלוח</span>
+    </div>
+    <div>
+      <button class="btn-primary" onclick="addToCart('Explosion of Light', 12500, 'ציור מקור - Large')">הוסף לסל</button>
+      <a href="#" class="btn-secondary">פרטים נוספים</a>
+    </div>
+  </div>
+</section>
+
+<!-- PRINTS SECTION -->
+<section class="prints-section section" id="prints">
+  <div class="section-header reveal">
+    <div>
+      <h2 class="section-title" style="color:var(--black)">הדפסים <em>איכותיים</em></h2>
+    </div>
+    <div class="section-meta" style="color:#888">
+      <span style="color:var(--black)">מ-₪280</span>
+      ג'יקלה על נייר ארכיוני
+    </div>
+  </div>
+
+  <div class="filter-bar reveal">
+    <button class="filter-btn active" onclick="filterPrints('all', this)">כל הגדלים</button>
+    <button class="filter-btn" onclick="filterPrints('small', this)">קטן 30×40</button>
+    <button class="filter-btn" onclick="filterPrints('medium', this)">בינוני 50×70</button>
+    <button class="filter-btn" onclick="filterPrints('large', this)">גדול 70×100</button>
+  </div>
+
+  <div class="art-grid" id="printsGrid" style="columns:4;">
+
+    <div class="art-card reveal" data-size="small">
+      <div class="art-img-wrap" style="aspect-ratio: 3/4;">
+        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&q=80" alt="Print 1">
+        <div class="art-overlay">
+          <button class="art-quick-add" onclick="addToCart('Fire & Rain — Print', 380, 'הדפס 50×70')" style="font-size:9px">הוסף לסל — ₪380</button>
+        </div>
+      </div>
+      <div class="art-info">
+        <div class="art-name" style="color:var(--black)">Fire & Rain</div>
+        <div class="art-details">
+          <span class="art-type">50×70 ס"מ</span>
+          <span class="art-price" style="color:var(--black)">₪380</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card reveal" data-size="medium">
+      <div class="art-img-wrap" style="aspect-ratio: 1/1.3;">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" alt="Print 2">
+        <div class="art-overlay">
+          <button class="art-quick-add" onclick="addToCart('Ocean Chaos — Print', 280, 'הדפס 30×40')" style="font-size:9px">הוסף לסל — ₪280</button>
+        </div>
+      </div>
+      <div class="art-info">
+        <div class="art-name" style="color:var(--black)">Ocean Chaos</div>
+        <div class="art-details">
+          <span class="art-type">30×40 ס"מ</span>
+          <span class="art-price" style="color:var(--black)">₪280</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card reveal" data-size="large">
+      <div class="art-img-wrap" style="aspect-ratio: 2/3;">
+        <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&q=80" alt="Print 3">
+        <div class="art-overlay">
+          <button class="art-quick-add" onclick="addToCart('Neon Garden — Print', 590, 'הדפס 70×100')" style="font-size:9px">הוסף לסל — ₪590</button>
+        </div>
+      </div>
+      <div class="art-info">
+        <div class="art-name" style="color:var(--black)">Neon Garden</div>
+        <div class="art-details">
+          <span class="art-type">70×100 ס"מ</span>
+          <span class="art-price" style="color:var(--black)">₪590</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card reveal" data-size="small">
+      <div class="art-img-wrap" style="aspect-ratio: 3/4;">
+        <img src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?w=400&q=80" alt="Print 4">
+        <div class="art-overlay">
+          <button class="art-quick-add" onclick="addToCart('Concrete Dream — Print', 320, 'הדפס 30×40')" style="font-size:9px">הוסף לסל — ₪320</button>
+        </div>
+      </div>
+      <div class="art-info">
+        <div class="art-name" style="color:var(--black)">Concrete Dream</div>
+        <div class="art-details">
+          <span class="art-type">30×40 ס"מ</span>
+          <span class="art-price" style="color:var(--black)">₪320</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT STRIP -->
+<section class="about-strip" id="about">
+  <div class="about-left reveal">
+    <div class="about-kicker">על הסטודיו</div>
+    <h2 class="about-title">GALA BRAUN<br><em style="color:var(--gold)">Art Studio</em></h2>
+    <p class="about-body">גלה ברון היא אמנית מתל אביב שיוצרת ציורים אבסטרקטיים עוצמתיים מלאי צבע ואנרגיה. הציורים שלה מאכלסים בתים, משרדים ולובי מלונות ברחבי הארץ.</p>
+    <p class="about-body">כל עבודה היא שיחה בין הצבע לקנבס - תהליך אינטואיטיבי שמתחיל ממקום של רגש ומסתיים ביצירה שיש לה חיים משלה.</p>
+    <a href="#contact" class="btn-secondary" style="display:inline-block;margin-top:16px">צור קשר לעבודה בהזמנה</a>
+  </div>
+  <div class="strip-divider"></div>
+  <div class="about-right reveal">
+    <div class="stats-row">
+      <div>
+        <div class="about-stat">283</div>
+        <div class="about-stat-label">עבודות שנוצרו</div>
+      </div>
+      <div>
+        <div class="about-stat">1.4K</div>
+        <div class="about-stat-label">עוקבים</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div>
+        <div class="about-stat">7+</div>
+        <div class="about-stat-label">שנות ניסיון</div>
+      </div>
+      <div>
+        <div class="about-stat">∞</div>
+        <div class="about-stat-label">צבעים</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testimonial-section reveal">
+  <blockquote class="testimonial-quote">
+    "הציור של גלה שינה את כל האווירה בסלון שלי. זו לא עוד תמונה על הקיר — זה משהו שמרגיש חי."
+  </blockquote>
+  <div class="testimonial-author">מיכל ל. — תל אביב</div>
+</section>
+
+<!-- INSTAGRAM STRIP -->
+<section class="instagram-strip">
+  <div class="instagram-title reveal">עקבו <a href="https://instagram.com/galabraun_art" target="_blank">@galabraun_art</a></div>
+  <div class="instagram-grid">
+    <div class="instagram-item">
+      <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=300&q=70" alt="">
+      <div class="instagram-item-overlay"><span style="color:white;font-size:20px">♥</span></div>
+    </div>
+    <div class="instagram-item">
+      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&q=70" alt="">
+      <div class="instagram-item-overlay"><span style="color:white;font-size:20px">♥</span></div>
+    </div>
+    <div class="instagram-item">
+      <img src="https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=300&q=70" alt="">
+      <div class="instagram-item-overlay"><span style="color:white;font-size:20px">♥</span></div>
+    </div>
+    <div class="instagram-item">
+      <img src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?w=300&q=70" alt="">
+      <div class="instagram-item-overlay"><span style="color:white;font-size:20px">♥</span></div>
+    </div>
+    <div class="instagram-item">
+      <img src="https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=300&q=70" alt="">
+      <div class="instagram-item-overlay"><span style="color:white;font-size:20px">♥</span></div>
+    </div>
+    <div class="instagram-item">
+      <img src="https://images.unsplash.com/photo-1549490349-8643362247b5?w=300&q=70" alt="">
+      <div class="instagram-item-overlay"><span style="color:white;font-size:20px">♥</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div>
+    <div class="footer-brand">GALA BRAUN</div>
+    <div class="footer-tagline">ציורים שלוקחים את הנשימה.<br>מסטודיו בתל אביב לקיר שלך.</div>
+  </div>
+  <div>
+    <div class="footer-col-title">ניווט</div>
+    <ul class="footer-links">
+      <li><a href="#originals">ציורי מקור</a></li>
+      <li><a href="#prints">הדפסים</a></li>
+      <li><a href="#about">על הסטודיו</a></li>
+      <li><a href="#">בהזמנה אישית</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-col-title">מידע</div>
+    <ul class="footer-links">
+      <li><a href="#">משלוח והחזרות</a></li>
+      <li><a href="#">FAQ</a></li>
+      <li><a href="#">תעודת אותנטיות</a></li>
+      <li><a href="#">תנאי שימוש</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-col-title">צור קשר</div>
+    <ul class="footer-links">
+      <li><a href="https://instagram.com/galabraun_art">Instagram</a></li>
+      <li><a href="https://wa.me/972501234567">WhatsApp</a></li>
+      <li><a href="mailto:gala@galabraun.art">Email</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <div class="footer-copy">© 2025 GALA BRAUN Art Studio. כל הזכויות שמורות.</div>
+  <div class="footer-copy">Made with ♥ in Tel Aviv</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // LOADER
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('loader').classList.add('done');
+    }, 2200);
+  });
+
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .art-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); ring.classList.add('hover'); });
+    el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
+  });
+
+  // CART
+  let cart = [];
+  function addToCart(name, price, type) {
+    cart.push({ name, price, type });
+    updateCartUI();
+    openCart();
+    showToast(`"${name}" נוסף לסל`);
+  }
+
+  function updateCartUI() {
+    const count = cart.length;
+    document.getElementById('cartCount').textContent = `(${count})`;
+    const total = cart.reduce((s, i) => s + i.price, 0);
+    document.getElementById('cartTotal').textContent = `₪${total.toLocaleString('he-IL')}`;
+
+    const itemsEl = document.getElementById('cartItems');
+    const footerEl = document.getElementById('cartFooter');
+
+    if (count === 0) {
+      itemsEl.innerHTML = `<div class="cart-empty"><div class="cart-empty-title">הסל ריק</div><div style="font-size:11px;color:var(--warm-gray);margin-top:8px">הוסף ציור שייקח את הנשימה</div></div>`;
+      footerEl.style.display = 'none';
+    } else {
+      itemsEl.innerHTML = cart.map((item, i) => `
+        <div class="cart-item">
+          <div style="width:80px;height:80px;background:#222;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:11px;color:var(--warm-gray)">art</div>
+          <div>
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-sub">${item.type}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+            <div class="cart-item-price">₪${item.price.toLocaleString('he-IL')}</div>
+            <button onclick="removeFromCart(${i})" style="background:none;border:none;color:var(--warm-gray);font-size:11px;cursor:none;text-decoration:underline">הסר</button>
+          </div>
+        </div>
+      `).join('');
+      footerEl.style.display = 'block';
+    }
+  }
+
+  function removeFromCart(i) {
+    cart.splice(i, 1);
+    updateCartUI();
+  }
+
+  function openCart() {
+    document.getElementById('cartSidebar').classList.add('open');
+    document.getElementById('cartOverlay').classList.add('open');
+  }
+  function closeCart() {
+    document.getElementById('cartSidebar').classList.remove('open');
+    document.getElementById('cartOverlay').classList.remove('open');
+  }
+
+  // TOAST
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // FILTER ORIGINALS
+  function filterArt(cat, btn) {
+    document.querySelectorAll('.filter-bar .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#originalsGrid .art-card').forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+    });
+  }
+
+  // FILTER PRINTS
+  function filterPrints(size, btn) {
+    const bar = btn.closest('.filter-bar');
+    bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#printsGrid .art-card').forEach(card => {
+      card.style.display = (size === 'all' || card.dataset.size === size) ? '' : 'none';
+    });
+  }
+
+  // SCROLL REVEAL
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
